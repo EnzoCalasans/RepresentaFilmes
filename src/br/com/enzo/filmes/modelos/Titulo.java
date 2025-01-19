@@ -1,5 +1,8 @@
 package br.com.enzo.filmes.modelos;
 
+import br.com.enzo.filmes.excecao.ErroDeConversaoDeAnoException;
+import com.google.gson.annotations.SerializedName;
+
 public class Titulo implements Comparable<Titulo>{
     private String nome;
     private int ano;
@@ -11,6 +14,16 @@ public class Titulo implements Comparable<Titulo>{
     public Titulo(String nome, int ano) {
         this.nome = nome;
         this.ano = ano;
+    }
+
+    public Titulo(TituloOmdb meuTituloOmdb) {
+        this.nome = meuTituloOmdb.title();
+
+        if (meuTituloOmdb.year().length() > 4){
+            throw new ErroDeConversaoDeAnoException("Não consegui converter o ano porque tem mais de 4 caracteres");
+        }
+        this.ano = Integer.valueOf(meuTituloOmdb.year());
+        this.duracaoEmMinutos = Integer.valueOf(meuTituloOmdb.runtime().substring(0,2));
     }
 
     public int getTotalDeAvaliacoes(){
@@ -66,5 +79,10 @@ public class Titulo implements Comparable<Titulo>{
     public int compareTo(Titulo outroTitulo) {
         return this.getNome().compareTo(outroTitulo.getNome());
 
+    }
+
+    @Override
+    public String toString() {
+        return "Nome= " + nome + " Ano= " + ano + " Duração= " + duracaoEmMinutos;
     }
 }
